@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { View, Text, TextInput, Platform, TouchableOpacity, KeyboardAvoidingView, Keyboard } from 'react-native'
 import Background from '../components/Background'
 import WhiteLogo from '../components/WhiteLogo'
 import { loginStyles } from '../loginTheme';
 import { useForm } from '../hooks/useForm';
 import { StackScreenProps } from '@react-navigation/stack';
+import { AuthContext } from '../context/AuthContext';
 
 interface Props extends StackScreenProps<any, any>{}
 
@@ -16,14 +17,17 @@ interface FormLogin{
 
 const LoginScreen = ({ navigation }:Props) => {
 
+    const { signIn } = useContext( AuthContext );
+
     const { email, password, form, onChange } = useForm<FormLogin>({
         email:"",
         password:"",
     })
 
     const onLogin = () => {
-        console.log({ email, password });
         Keyboard.dismiss();
+        
+        signIn(email, password);
     }
 
     return (

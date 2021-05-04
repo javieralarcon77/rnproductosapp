@@ -1,5 +1,6 @@
 import React, { createContext, useReducer } from "react";
-import { Usuario } from "../interfaces/appInterfaces";
+import cafeApi from "../api/cafeApi";
+import { Usuario, LoginResponse } from '../interfaces/appInterfaces';
 import { authReducer, AuthState } from './AuthReducer';
 
 type AuthContextProps = {
@@ -7,8 +8,8 @@ type AuthContextProps = {
     token: string | null;
     user: Usuario | null;
     status: 'checking' | 'authenticated' | 'not-authenticated';
+    signIn: (correo:string, password:string) => void;
     signUp: () => void;
-    signIn: () => void;
     logOut: () => void;
     removeError: () => void;
 }
@@ -26,10 +27,34 @@ export const AuthProvider = ({ children }:any) => {
 
     const [ state, dispatch ] = useReducer( authReducer, authInitialState);
 
-    const signUp = () => {
-        console.log('signUp');
+    const signIn = async ( correo:string, password:string ) => {
+        try {
+            
+            const resp = await cafeApi.post<LoginResponse>('/auth/login',{
+                correo: correo,
+                password: password
+            })
+            dispatch({
+                type:'signUp',
+                payload: resp.data,
+            })
+            
+        } catch (error) {
+            if(error.response.status === 400){
+                let msg = '';
+                if(typeof error.response.data.errors !== 'undefined'){
+                    let err = error.response.data.errors[0];
+                    msg = err.msg;
+                }else{
+                    msg = error.response.data.msg;
+                }
+                console.log(msg);
+            }
+        }
     }
-    const signIn = () => {
+
+
+    const signUp = () => {
         console.log('signIn');
     }
     const logOut = () => {
