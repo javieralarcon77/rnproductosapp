@@ -86,8 +86,9 @@ export const AuthProvider = ({ children }:any) => {
     const signUp = () => {
         console.log('signIn');
     }
-    const logOut = () => {
-        console.log('logOut');
+    const logOut = async () => {
+        dispatch({type:'logout'});
+        await AsyncStorage.removeItem('token');
     }
     const removeError = () => {
         dispatch({type:'removeError'});
