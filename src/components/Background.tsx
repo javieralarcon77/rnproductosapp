@@ -9,8 +9,8 @@ const Background = () => {
                 backgroundColor:'#5856D6',
                 top: -280,
                 left: -250,
-                width: 950,
-                height: 600,
+                width: 1000,
+                height: 800,
                 transform:[{
                     rotate: '-75deg'
                 }],
