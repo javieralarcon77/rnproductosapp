@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }:any) => {
                 payload: resp.data
             })
             
-            console.log({ token });
+            await AsyncStorage.setItem('token', resp.data.token); 
         } catch(e) {
             dispatch({type:'notAuthenticated'})
         }
