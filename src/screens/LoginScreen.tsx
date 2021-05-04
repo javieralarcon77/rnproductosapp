@@ -6,13 +6,11 @@ import { loginStyles } from '../loginTheme';
 import { useForm } from '../hooks/useForm';
 import { StackScreenProps } from '@react-navigation/stack';
 import { AuthContext } from '../context/AuthContext';
+import { FormLogin } from '../interfaces/appInterfaces';
 
 interface Props extends StackScreenProps<any, any>{}
 
-interface FormLogin{
-    email:string,
-    password:string,
-}
+
 
 
 const LoginScreen = ({ navigation }:Props) => {

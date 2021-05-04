@@ -1,20 +1,19 @@
-import React from 'react'
-import { View, Text, TextInput, Platform, TouchableOpacity, KeyboardAvoidingView, Keyboard } from 'react-native'
+import React, { useContext, useEffect } from 'react'
+import { View, Text, TextInput, Platform, TouchableOpacity, KeyboardAvoidingView, Keyboard, Alert } from 'react-native'
 import WhiteLogo from '../components/WhiteLogo'
 import { loginStyles } from '../loginTheme';
 import { useForm } from '../hooks/useForm';
 import { StackScreenProps } from '@react-navigation/stack';
+import { FormRegister } from '../interfaces/appInterfaces';
+import { AuthContext } from '../context/AuthContext';
 
 interface Props extends StackScreenProps<any, any>{}
 
-interface FormRegister{
-    name: string,
-    email:string,
-    password:string,
-}
 
 
 const RegisterScreen = ({ navigation }:Props) => {
+
+    const { signUp, errorMessage, removeError } = useContext(AuthContext);
 
     const { email, password, name, form, onChange } = useForm<FormRegister>({
         name:"",
@@ -22,8 +21,20 @@ const RegisterScreen = ({ navigation }:Props) => {
         password:"",
     })
 
+    useEffect(()=>{
+        if( errorMessage.length === 0 ) return;
+
+        Alert.alert(
+            'Login Incorrecto', 
+            errorMessage ,
+            [{ text: 'Ok', onPress: removeError }]
+        );
+
+    }, [ errorMessage ])
+
     const onRegister = () => {
-        console.log({ email, password, name });
+        signUp({ email, password, name });
+        
         Keyboard.dismiss();
     }
 
