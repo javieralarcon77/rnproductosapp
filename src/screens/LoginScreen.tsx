@@ -1,5 +1,5 @@
-import React, { useContext } from 'react'
-import { View, Text, TextInput, Platform, TouchableOpacity, KeyboardAvoidingView, Keyboard } from 'react-native'
+import React, { useContext, useEffect } from 'react'
+import { View, Text, TextInput, Platform, TouchableOpacity, KeyboardAvoidingView, Keyboard, Alert } from 'react-native'
 import Background from '../components/Background'
 import WhiteLogo from '../components/WhiteLogo'
 import { loginStyles } from '../loginTheme';
@@ -17,12 +17,23 @@ interface FormLogin{
 
 const LoginScreen = ({ navigation }:Props) => {
 
-    const { signIn } = useContext( AuthContext );
+    const { signIn, errorMessage, removeError } = useContext( AuthContext );
 
     const { email, password, form, onChange } = useForm<FormLogin>({
         email:"",
         password:"",
     })
+
+    useEffect(()=>{
+        if( errorMessage.length === 0 ) return;
+
+        Alert.alert(
+            'Login Incorrecto', 
+            errorMessage ,
+            [{ text: 'Ok', onPress: removeError }]
+        );
+
+    }, [ errorMessage ])
 
     const onLogin = () => {
         Keyboard.dismiss();

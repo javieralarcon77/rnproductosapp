@@ -41,14 +41,10 @@ export const AuthProvider = ({ children }:any) => {
             
         } catch (error) {
             if(error.response.status === 400){
-                let msg = '';
-                if(typeof error.response.data.errors !== 'undefined'){
-                    let err = error.response.data.errors[0];
-                    msg = err.msg;
-                }else{
-                    msg = error.response.data.msg;
-                }
-                console.log(msg);
+                dispatch({ 
+                    type:'addError', 
+                    payload: error.response.data.msg || 'Informacion Incorrecta'
+                })
             }
         }
     }
@@ -61,7 +57,7 @@ export const AuthProvider = ({ children }:any) => {
         console.log('logOut');
     }
     const removeError = () => {
-        console.log('removeError');
+        dispatch({type:'removeError'});
     }
 
     return (
