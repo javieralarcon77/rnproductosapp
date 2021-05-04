@@ -4,6 +4,9 @@ import Background from '../components/Background'
 import WhiteLogo from '../components/WhiteLogo'
 import { loginStyles } from '../loginTheme';
 import { useForm } from '../hooks/useForm';
+import { StackScreenProps } from '@react-navigation/stack';
+
+interface Props extends StackScreenProps<any, any>{}
 
 interface FormLogin{
     email:string,
@@ -11,7 +14,7 @@ interface FormLogin{
 }
 
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }:Props) => {
 
     const { email, password, form, onChange } = useForm<FormLogin>({
         email:"",
@@ -92,6 +95,9 @@ const LoginScreen = () => {
                     <View style={ loginStyles.buttonSecondaryContainer }>
                         <TouchableOpacity
                             activeOpacity={ 0.8 }
+                            onPress={ ()=>{
+                                navigation.replace('RegisterScreen');
+                            } }
                         >
                             <Text style={ loginStyles.buttonText }>Nueva Cuenta</Text>
                         </TouchableOpacity>
