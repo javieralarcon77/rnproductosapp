@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { View, Text, StyleSheet, TextInput, Button, ActivityIndicator } from 'react-native'
+import React, { useContext, useEffect } from 'react'
+import { View, Text, StyleSheet, TextInput, Button, Image } from 'react-native'
 import { StackScreenProps } from '@react-navigation/stack';
 import { ProductsStackParams } from '../navigate/ProductsNavigator';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -17,7 +17,11 @@ const ProductScreen = ({ route, navigation }:Props) => {
 
     const { categories } = useCategories();
 
-    const { loadProductById } = useContext( ProductsContext );
+    const { 
+        loadProductById,
+        addProduct,
+        updateProduct,
+     } = useContext( ProductsContext );
     
     const { _id, nombre, categoriaId, img, form, onChange, setFormValue } = useForm({
         _id: id,
@@ -28,23 +32,40 @@ const ProductScreen = ({ route, navigation }:Props) => {
 
     useEffect(()=>{
         navigation.setOptions({
-            title: (name !== '') ? name : 'Nuevo Producto'
+            title: (nombre !== '') ? nombre : 'Nuevo Producto'
         })
-    },[])
+    },[ nombre ])
 
     useEffect(() => {
         loadProduct();
     }, [])
 
+    useEffect(() => {
+        if(categories.length > 0 && _id.length === 0){
+            onChange( categories[0]._id, 'categoriaId' );
+        }
+    }, [ categories ])
+
     const loadProduct = async () => {
-        if(id.length === 0) return;
-        const product = await loadProductById( id );
+        if(_id.length === 0) return;
+        const product = await loadProductById( _id );
         
         setFormValue({
             ...form,
             categoriaId: product.categoria._id,
             img: (product.img) ? product.img : '',
         })
+    }
+
+    const saveOrUpdate = async () => {
+        if( _id.length > 0 ){ //actualizar
+            updateProduct( categoriaId, nombre, _id );
+        }else{ //guardar
+            const product = await addProduct( categoriaId, nombre );
+            if(product._id){
+                onChange(product._id, '_id');
+            }
+        }
     }
 
     return (
@@ -66,10 +87,9 @@ const ProductScreen = ({ route, navigation }:Props) => {
                 {/** Picker / Selector */}
                 <Text style={ styles.label }>Categoría</Text>
                 <Picker
-                    selectedValue={categoriaId}
-                    onValueChange={(itemValue, itemIndex) =>
-                        onChange(itemValue, 'categoriaId')
-                    }>
+                    selectedValue={ categoriaId }
+                    onValueChange={( value ) => onChange(value, 'categoriaId') }
+                >
                     {
                         categories.map( (c) => (
                             <Picker.Item 
@@ -83,24 +103,41 @@ const ProductScreen = ({ route, navigation }:Props) => {
                 
                 <Button
                     title="Guardar"
-                    onPress={ ()=>{} } //TODO: agregar funcionalidad
+                    onPress={ saveOrUpdate } //TODO: agregar funcionalidad
                     color="#5856D6"
                 />
 
                 {/** Botones para agregar la imagen al guardar el producto */}
-                <View style={ styles.containerButtons } >
-                    <Button
-                        title="Cámara"
-                        onPress={ ()=>{} } //TODO: agregar funcionalidad
-                        color="#5856D6"
+                {
+                    _id.length > 0 && 
+                    <View style={ styles.containerButtons } >
+                        <Button
+                            title="Cámara"
+                            onPress={ ()=>{} } //TODO: agregar funcionalidad
+                            color="#5856D6"
+                        />
+                        <View style={{ width: 10 }}/>
+                        <Button
+                            title="Galería"
+                            onPress={ ()=>{} } //TODO: agregar funcionalidad
+                            color="#5856D6"
+                        />  
+                    </View>
+                }
+                
+                {
+                    img.length > 0 &&
+                    <Image
+                        source={{
+                            uri: img 
+                        }}
+                        style={{
+                            marginTop: 20,
+                            width: '100%',
+                            height: 300
+                        }}
                     />
-                    <View style={{ width: 10 }}/>
-                    <Button
-                        title="Galería"
-                        onPress={ ()=>{} } //TODO: agregar funcionalidad
-                        color="#5856D6"
-                    />  
-                </View>
+                }
 
             </ScrollView>
         </View>
