@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from 'react'
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react'
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl } from 'react-native';
 import { ProductsContext } from '../context/ProductsContext'
 import { Producto } from '../interfaces/appInterfaces';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -13,8 +13,7 @@ interface Props extends StackScreenProps<ProductsStackParams,'ProductListScreen'
 const ProductListScreen = ({ navigation }:Props) => {
 
     const { products, loadProducts } =  useContext(ProductsContext);
-
-    //TODO: Pull to refresh
+    const [refresing, setRefresing] = useState(false);
 
     useEffect(()=>{
 
@@ -55,6 +54,12 @@ const ProductListScreen = ({ navigation }:Props) => {
         )
     }
 
+    const loadProductosFromBackend = async () => {
+        setRefresing(true);
+        await loadProducts();
+        setRefresing(false);
+    }
+
     return (
         <View style={{ flex: 1, marginHorizontal: 10 }}>
             <FlatList
@@ -62,6 +67,15 @@ const ProductListScreen = ({ navigation }:Props) => {
                 keyExtractor={ (item)=> item._id }
                 renderItem={ ({ item }) => _renderItem( item ) }
                 ItemSeparatorComponent={()=> <View style={ styles.itemSeparator }/> }
+                refreshControl={ 
+                    <RefreshControl
+                        refreshing={ refresing }
+                        onRefresh={ loadProductosFromBackend }
+                        progressViewOffset={ 10 }
+                        progressBackgroundColor="#5856D6"
+                        style={ { marginTop: 10 } }
+                    />
+                }
             />
         </View>
     )
