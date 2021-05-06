@@ -37,7 +37,7 @@ export interface Producto {
     _id:       string;
     nombre:    string;
     categoria: Categoria;
-    usuario:   Categoria;
+    usuario:   CreadoPor;
     img?:      string;
 }
 

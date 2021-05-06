@@ -1,26 +1,51 @@
-import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, TextInput, Button } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
+import { View, Text, StyleSheet, TextInput, Button, ActivityIndicator } from 'react-native'
 import { StackScreenProps } from '@react-navigation/stack';
 import { ProductsStackParams } from '../navigate/ProductsNavigator';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Picker } from '@react-native-picker/picker';
 import { useCategories } from '../hooks/useCategories';
+import { useForm } from '../hooks/useForm';
+import { ProductsContext } from '../context/ProductsContext';
 
 interface Props extends StackScreenProps<ProductsStackParams,'ProductScreen'>{
 
 }
 
 const ProductScreen = ({ route, navigation }:Props) => {
-    const { id, name = '' } = route.params;
+    const { id = '', name = '' } = route.params;
 
     const { categories } = useCategories();
-    const [ categoria, setCategoria ] = useState();
+
+    const { loadProductById } = useContext( ProductsContext );
     
+    const { _id, nombre, categoriaId, img, form, onChange, setFormValue } = useForm({
+        _id: id,
+        categoriaId: '',
+        nombre: name,
+        img: ''
+    });
+
     useEffect(()=>{
         navigation.setOptions({
             title: (name !== '') ? name : 'Nuevo Producto'
         })
     },[])
+
+    useEffect(() => {
+        loadProduct();
+    }, [])
+
+    const loadProduct = async () => {
+        if(id.length === 0) return;
+        const product = await loadProductById( id );
+        
+        setFormValue({
+            ...form,
+            categoriaId: product.categoria._id,
+            img: (product.img) ? product.img : '',
+        })
+    }
 
     return (
         <View style={ styles.container }>
@@ -34,17 +59,16 @@ const ProductScreen = ({ route, navigation }:Props) => {
                     placeholder="Producto"
                     style={ styles.input }
 
-                    //TODO:
-                    //value
-                    //onChangeText
+                    value={ nombre }
+                    onChangeText={ (value) => onChange( value, 'nombre' ) }
                 />
 
                 {/** Picker / Selector */}
                 <Text style={ styles.label }>Categoría</Text>
                 <Picker
-                    selectedValue={categoria}
+                    selectedValue={categoriaId}
                     onValueChange={(itemValue, itemIndex) =>
-                        setCategoria(itemValue)
+                        onChange(itemValue, 'categoriaId')
                     }>
                     {
                         categories.map( (c) => (
@@ -56,7 +80,7 @@ const ProductScreen = ({ route, navigation }:Props) => {
                         ) )    
                     }
                 </Picker>
-
+                
                 <Button
                     title="Guardar"
                     onPress={ ()=>{} } //TODO: agregar funcionalidad
