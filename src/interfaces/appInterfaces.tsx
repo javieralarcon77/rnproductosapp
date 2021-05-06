@@ -44,4 +44,13 @@ export interface Producto {
 export interface Categoria {
     _id:    string;
     nombre: string;
+    usuario?: CreadoPor;
+}
+export interface CategoriesResponse {
+    total:      number;
+    categorias: Categoria[];
+}
+export interface CreadoPor {
+    _id:    string;
+    nombre: string;
 }
