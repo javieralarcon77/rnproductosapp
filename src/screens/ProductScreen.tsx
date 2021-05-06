@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, TextInput, Button } from 'react-native'
 import { StackScreenProps } from '@react-navigation/stack';
 import { ProductsStackParams } from '../navigate/ProductsNavigator';
 import { ScrollView } from 'react-native-gesture-handler';
+import { Picker } from '@react-native-picker/picker';
+import { useCategories } from '../hooks/useCategories';
 
 interface Props extends StackScreenProps<ProductsStackParams,'ProductScreen'>{
 
@@ -11,6 +13,9 @@ interface Props extends StackScreenProps<ProductsStackParams,'ProductScreen'>{
 const ProductScreen = ({ route, navigation }:Props) => {
     const { id, name = '' } = route.params;
 
+    const { categories } = useCategories();
+    const [ categoria, setCategoria ] = useState();
+    
     useEffect(()=>{
         navigation.setOptions({
             title: (name !== '') ? name : 'Nuevo Producto'
@@ -36,7 +41,21 @@ const ProductScreen = ({ route, navigation }:Props) => {
 
                 {/** Picker / Selector */}
                 <Text style={ styles.label }>Categoría</Text>
-                
+                <Picker
+                    selectedValue={categoria}
+                    onValueChange={(itemValue, itemIndex) =>
+                        setCategoria(itemValue)
+                    }>
+                    {
+                        categories.map( (c) => (
+                            <Picker.Item 
+                                label={ c.nombre } 
+                                value={ c._id }
+                                key={ c._id }
+                            />
+                        ) )    
+                    }
+                </Picker>
 
                 <Button
                     title="Guardar"
