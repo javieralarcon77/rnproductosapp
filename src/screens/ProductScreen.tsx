@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { View, Text, StyleSheet, TextInput, Button, Image, ScrollView } from 'react-native'
 import { StackScreenProps } from '@react-navigation/stack';
 
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import { launchCamera, launchImageLibrary, ImagePickerResponse } from 'react-native-image-picker';
 import { Picker } from '@react-native-picker/picker';
 
 import { ProductsStackParams } from '../navigate/ProductsNavigator';
@@ -72,18 +72,27 @@ const ProductScreen = ({ route, navigation }:Props) => {
         }
     }
 
+    const respPhoto = (resp:ImagePickerResponse) => {
+        if(resp.didCancel) return;            
+        if(!resp.uri) return;
+
+        setTempUri( resp.uri );
+        uploadImage( resp, _id );
+    }
+
     const takePhoto = async () => {
         launchCamera({
             mediaType:'photo',
             quality: 0.5
-        }, (resp) => {
-            if(resp.didCancel) return;            
-            if(!resp.uri) return;
-
-            setTempUri( resp.uri );
-            uploadImage( resp, _id );
-        } )
+        }, respPhoto )
     }
+
+    const takePhotoFromGalery = async () => {
+        launchImageLibrary({
+            mediaType:'photo',
+            quality: 0.5
+        }, respPhoto )
+    } 
 
     return (
         <View style={ styles.container }>
@@ -136,7 +145,7 @@ const ProductScreen = ({ route, navigation }:Props) => {
                         <View style={{ width: 10 }}/>
                         <Button
                             title="Galería"
-                            onPress={ ()=>{} } //TODO: agregar funcionalidad
+                            onPress={ takePhotoFromGalery } //TODO: agregar funcionalidad
                             color="#5856D6"
                         />  
                     </View>
