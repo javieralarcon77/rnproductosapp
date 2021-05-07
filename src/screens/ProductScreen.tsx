@@ -24,6 +24,7 @@ const ProductScreen = ({ route, navigation }:Props) => {
         loadProductById,
         addProduct,
         updateProduct,
+        uploadImage
      } = useContext( ProductsContext );
     
     const { _id, nombre, categoriaId, img, form, onChange, setFormValue } = useForm({
@@ -80,6 +81,7 @@ const ProductScreen = ({ route, navigation }:Props) => {
             if(!resp.uri) return;
 
             setTempUri( resp.uri );
+            uploadImage( resp, _id );
         } )
     }
 
@@ -188,6 +190,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         borderColor:"rgba(0,0,0,0.2)",
         height: 45,
+        color:'#000000',
         marginBottom: 10,
     },
     containerButtons:{
