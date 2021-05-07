@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl, Image } from 'react-native';
 import { ProductsContext } from '../context/ProductsContext'
 import { Producto } from '../interfaces/appInterfaces';
 import { StackScreenProps } from '@react-navigation/stack';
 import { ProductsStackParams } from '../navigate/ProductsNavigator';
+import { AuthContext } from '../context/AuthContext';
+import Fab from '../components/Fab';
 
 interface Props extends StackScreenProps<ProductsStackParams,'ProductListScreen'>{
 
@@ -12,6 +14,7 @@ interface Props extends StackScreenProps<ProductsStackParams,'ProductListScreen'
 
 const ProductListScreen = ({ navigation }:Props) => {
 
+    const {  logOut } = useContext(AuthContext);
     const { products, loadProducts } =  useContext(ProductsContext);
     const [refresing, setRefresing] = useState(false);
 
@@ -24,11 +27,11 @@ const ProductListScreen = ({ navigation }:Props) => {
                     style={{ marginRight: 10 }}
                     onPress={ 
                         ()=>{ 
-                            navigation.navigate('ProductScreen',{})
+                           logOut(); 
                         }
                     }
                 >
-                    <Text>Agregar</Text>
+                    <Text>Salir</Text>
                 </TouchableOpacity>
             )
         })
@@ -49,7 +52,26 @@ const ProductListScreen = ({ navigation }:Props) => {
                     }
                 }
             >
-                <Text style={ styles.productName }> { producto.nombre } </Text>
+                <View style={{ flex:1, flexDirection:'row' }}>
+
+                    <Image
+                        source={{
+                            uri:  producto.img || 'https://via.placeholder.com/200x200.png',
+                        }}
+                        style={{  
+                            height: 50,
+                            width: 50,
+                            marginRight: 5,
+                            borderRadius: 10,
+                        }}
+                    />
+                
+                    <View>
+                        <Text style={ styles.productName }> { producto.nombre } </Text>
+                        <Text style={ styles.productCategory }> { producto.categoria.nombre } </Text>
+                    </View>
+                    
+                </View>
             </TouchableOpacity>
         )
     }
@@ -77,6 +99,12 @@ const ProductListScreen = ({ navigation }:Props) => {
                     />
                 }
             />
+            <Fab
+                title="+"
+                onPress={ ()=>{
+                    navigation.navigate('ProductScreen',{})
+                } }
+            />
         </View>
     )
 }
@@ -84,6 +112,9 @@ const ProductListScreen = ({ navigation }:Props) => {
 const styles = StyleSheet.create({
     productName:{
         fontSize: 20,
+    },
+    productCategory:{
+        fontSize: 14,
     },
     itemSeparator:{
         borderBottomWidth: 2,

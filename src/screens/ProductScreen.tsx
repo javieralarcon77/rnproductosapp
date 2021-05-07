@@ -112,20 +112,28 @@ const ProductScreen = ({ route, navigation }:Props) => {
 
                 {/** Picker / Selector */}
                 <Text style={ styles.label }>Categoría</Text>
-                <Picker
-                    selectedValue={ categoriaId }
-                    onValueChange={( value ) => onChange(value, 'categoriaId') }
-                >
-                    {
-                        categories.map( (c) => (
-                            <Picker.Item 
-                                label={ c.nombre } 
-                                value={ c._id }
-                                key={ c._id }
-                            />
-                        ) )    
-                    }
-                </Picker>
+                <View style={ {
+                    ...styles.input,
+                    paddingHorizontal: 0,
+                    paddingVertical: 0,
+                    marginBottom: 10,
+                } }>
+                    <Picker
+                        style={{ top: -5 }}
+                        selectedValue={ categoriaId }
+                        onValueChange={( value ) => onChange(value, 'categoriaId') }
+                    >
+                        {
+                            categories.map( (c) => (
+                                <Picker.Item 
+                                    label={ c.nombre } 
+                                    value={ c._id }
+                                    key={ c._id }
+                                />
+                            ) )    
+                        }
+                    </Picker>
+                </View>
                 
                 <Button
                     title="Guardar"
