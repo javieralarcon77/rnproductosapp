@@ -32,7 +32,7 @@ Ejecutar npm para instalar las dependendencias
 <img src="/screenshots/01-login.png" alt="Pantalla de Login" width="200"/>
 
 <p>Registro</p>
-<img src="/screenshots/02-registro" alt="Pantalla de Registro" width="200"/>
+<img src="/screenshots/02-registro.png" alt="Pantalla de Registro" width="200"/>
 
 <p>Validaciones en el login</p>
 <img src="/screenshots/03-login-validaciones.png" alt="Pantalla de Login con validacion" width="200"/>
@@ -43,6 +43,6 @@ Ejecutar npm para instalar las dependendencias
 <p>Nuevo Producto</p>
 <img src="/screenshots/05-nuevo-producto.png" alt="Agregar un producto" width="200"/>
 
-<p>Edicion de Producto</p>
+<p>Edición de Producto</p>
 <img src="/screenshots/06-edicion-producto.png" alt="Edicion de producto" width="200"/>
 
