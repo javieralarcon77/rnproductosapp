@@ -1,9 +1,11 @@
-import React, { useContext, useEffect } from 'react'
-import { View, Text, StyleSheet, TextInput, Button, Image } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
+import { View, Text, StyleSheet, TextInput, Button, Image, ScrollView } from 'react-native'
 import { StackScreenProps } from '@react-navigation/stack';
-import { ProductsStackParams } from '../navigate/ProductsNavigator';
-import { ScrollView } from 'react-native-gesture-handler';
+
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import { Picker } from '@react-native-picker/picker';
+
+import { ProductsStackParams } from '../navigate/ProductsNavigator';
 import { useCategories } from '../hooks/useCategories';
 import { useForm } from '../hooks/useForm';
 import { ProductsContext } from '../context/ProductsContext';
@@ -15,6 +17,7 @@ interface Props extends StackScreenProps<ProductsStackParams,'ProductScreen'>{
 const ProductScreen = ({ route, navigation }:Props) => {
     const { id = '', name = '' } = route.params;
 
+    const [tempUri, setTempUri] = useState<string>();
     const { categories } = useCategories();
 
     const { 
@@ -68,6 +71,18 @@ const ProductScreen = ({ route, navigation }:Props) => {
         }
     }
 
+    const takePhoto = async () => {
+        launchCamera({
+            mediaType:'photo',
+            quality: 0.5
+        }, (resp) => {
+            if(resp.didCancel) return;            
+            if(!resp.uri) return;
+
+            setTempUri( resp.uri );
+        } )
+    }
+
     return (
         <View style={ styles.container }>
             {/* 
@@ -113,7 +128,7 @@ const ProductScreen = ({ route, navigation }:Props) => {
                     <View style={ styles.containerButtons } >
                         <Button
                             title="Cámara"
-                            onPress={ ()=>{} } //TODO: agregar funcionalidad
+                            onPress={ takePhoto } //TODO: agregar funcionalidad
                             color="#5856D6"
                         />
                         <View style={{ width: 10 }}/>
@@ -124,12 +139,24 @@ const ProductScreen = ({ route, navigation }:Props) => {
                         />  
                     </View>
                 }
-                
                 {
-                    img.length > 0 &&
+                    (img.length > 0 && !tempUri ) &&
                     <Image
                         source={{
                             uri: img 
+                        }}
+                        style={{
+                            marginTop: 20,
+                            width: '100%',
+                            height: 300
+                        }}
+                    />
+                }
+                {
+                    tempUri &&
+                    <Image
+                        source={{
+                            uri: tempUri 
                         }}
                         style={{
                             marginTop: 20,
